@@ -1,15 +1,15 @@
-import math
-
-ball_bounce = 0.9
-floor_y = 1000
+import math, game_vars as gv, board_vars as bv
 
 class Ball:
-    def __init__(self, color, start_x, start_y, radius):
+    def __init__(self, color, start_x, start_y, radius, weight):
         self.color = color
         self.x = start_x
         self.y = start_y
+        self.start_x = start_x
+        self.start_y = start_y
         self.radius = radius
         self.heavy = False
+        self.weight = weight
         self.heavy_weight = 1
         self.dx = 0
         self.dy = 0
@@ -29,12 +29,12 @@ class Ball:
                     t1, t2 = -n2, n1
                     ncomp1 = self.dx * n1 + self.dy * n2
                     ncomp2 = ball.dx * n1 + ball.dy * n2
-                    m1 = self.heavy_weight if self.heavy else 1
-                    m2 = ball.heavy_weight if ball.heavy else 1
-                    ncomp1_new = (ncomp1 * (m1 - ball_bounce * m2) + 
-                        ncomp2 * (1 + ball_bounce) * m2) / (m1 + m2)
-                    ncomp2_new = (ncomp2 * (m2 - ball_bounce * m1) + 
-                        ncomp1 * (1 + ball_bounce) * m1) / (m1 + m2)
+                    m1 = self.heavy_weight if self.heavy else self.weight
+                    m2 = ball.heavy_weight if ball.heavy else ball.weight
+                    ncomp1_new = (ncomp1 * (m1 - gv.ball_bounce * m2) + 
+                        ncomp2 * (1 + gv.ball_bounce) * m2) / (m1 + m2)
+                    ncomp2_new = (ncomp2 * (m2 - gv.ball_bounce * m1) + 
+                        ncomp1 * (1 + gv.ball_bounce) * m1) / (m1 + m2)
                     tcomp1 = self.dx * t1 + self.dy * t2
                     tcomp2 = ball.dx * t1 + ball.dy * t2
                     self.dx, ball.dx = ncomp1_new * n1 + tcomp1 * t1, ncomp2_new * n1 + tcomp2 * t1
@@ -46,9 +46,9 @@ class Ball:
 
 class PlayerBall(Ball):
     def __init__(self, color, start_x, start_y, up, down, left, right, heavy_key,
-            radius, gravity, jump_force, vertical_force, min_fall_speed, lateral_force,
-            lateral_friction, bounce, heavy_weight, heavy_force_multiplier):
-        super().__init__(color, start_x, start_y, radius)
+            radius, gravity, jump_force, vertical_force, lateral_force,
+            lateral_friction, floor_bounce, heavy_weight, heavy_force_multiplier, weight):
+        super().__init__(color, start_x, start_y, radius, weight)
         self.up = up
         self.down = down
         self.left = left
@@ -58,24 +58,24 @@ class PlayerBall(Ball):
         self.gravity = gravity
         self.jump_force = jump_force
         self.vertical_force = vertical_force
-        self.min_fall_speed = min_fall_speed
         self.lateral_force = lateral_force
         self.lateral_friction = lateral_friction
-        self.bounce = bounce
+        self.floor_bounce = floor_bounce
         self.heavy_weight = heavy_weight
         self.heavy_force_multiplier = heavy_force_multiplier
+        self.score = 0
+        self.alive = True
 
     def move(self, keys, balls):
         self.update_collisions(balls)
         self.update_player_movement(keys)
         super().move()
+        self.check_dead()
 
     def update_player_movement(self, keys):
         self.heavy = keys[self.heavy_key]
         if keys[self.up]:
             self.dy -= self.vertical_force if not self.heavy else self.vertical_force * self.heavy_force_multiplier
-            if self.dy > 0:
-                self.dy = max(self.dy, self.min_fall_speed)
         if keys[self.down]:
             self.dy += self.vertical_force if not self.heavy else self.vertical_force * self.heavy_force_multiplier
         if keys[self.right]:
@@ -89,19 +89,23 @@ class PlayerBall(Ball):
 
         if abs(self.dx) < 0.001:
             self.dx = 0
-        if self.y + self.radius >= floor_y and keys[self.up]:
+        if self.y + self.radius >= bv.floor_y and keys[self.up]:
             self.dy = self.jump_force if not self.heavy else self.jump_force * self.heavy_force_multiplier
-        elif self.y + self.radius >= floor_y:
-            self.y = floor_y - self.radius
+        elif self.y + self.radius >= bv.floor_y:
+            self.y = bv.floor_y - self.radius
             bounce_mul = 0.6 if self.heavy else 1
-            self.dy = -self.dy * self.bounce * bounce_mul
+            self.dy = -self.dy * self.floor_bounce * bounce_mul
             if abs(self.dy) < self.gravity * 2:
                 self.dy = 0
         self.dy += self.gravity
 
+    def check_dead(self):
+        dead = self.x - self.radius < bv.bar_width or self.x + self.radius > bv.WIDTH - bv.bar_width
+        self.alive = not dead
+
 class NPCBall(Ball):
-    def __init__(self, color, start_x, start_y, radius):
-        super().__init__(color, start_x, start_y, radius)
+    def __init__(self, color, start_x, start_y, radius, npc_weight):
+        super().__init__(color, start_x, start_y, radius, npc_weight)
     
     def move(self, balls, pballs):
         self.update_collisions(balls)
@@ -116,7 +120,18 @@ class NPCBall(Ball):
             if dist < mn_dist:
                 mn_dist = dist
                 mn_pball = pball
-        n1, n2 = (self.x - mn_pball.x) * dist / 10000000, (self.y - mn_pball.y) * dist / 10000000
+        n1, n2 = (self.x - mn_pball.x) * dist / 5000000, (self.y - mn_pball.y) * dist / 5000000
         self.dx -= n1
         self.dy -= n2
-        
+        if self.y + self.radius >= bv.floor_y:
+            self.y = bv.floor_y - self.radius
+            self.dy = -self.dy
+        if self.x + self.radius >= bv.WIDTH - bv.bar_width:
+            self.x = bv.WIDTH - bv.bar_width - self.radius
+            self.dx = -self.dx
+        if self.x - self.radius <= bv.bar_width:
+            self.x = bv.bar_width + self.radius
+            self.dx = -self.dx
+        if self.dx ** 2 + self.dy ** 2 > gv.npc_max_speed ** 2:
+            self.dx = (self.dx / (abs(self.dx) + abs(self.dy))) * gv.npc_max_speed
+            self.dy = (self.dy / (abs(self.dx) + abs(self.dy))) * gv.npc_max_speed

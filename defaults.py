@@ -1,0 +1,15 @@
+radius = 20
+gravity = 0.5
+jump_force = -7
+vertical_force = 0.4
+lateral_force = 0.1
+lateral_friction = 0.02
+floor_bounce = 0.7
+player_weight = 1
+heavy_weight = 2
+heavy_force_multiplier = 0.8
+ball_bounce = 0.9
+npc_max_speed = 200
+npc_ball_radius = 30
+num_npc_balls_per_side = 5
+npc_weight = 0.5
