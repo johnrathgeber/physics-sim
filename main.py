@@ -1,5 +1,10 @@
-import pygame, game_vars as gv, board_vars as bv
+import pygame
+import board_vars as bv
+import balls
 from balls import PlayerBall, NPCBall
+from settings_screen import settings_loop
+from config import GameConfig
+from game_vars import calculate_game_vars
 
 pygame.init()
 screen = pygame.display.set_mode((bv.WIDTH, bv.HEIGHT))
@@ -15,8 +20,19 @@ BLACK = (0, 0, 0)
 
 font = pygame.font.SysFont("Arial", 60, bold=True)
 
-red_start_x, blue_start_x = bv.WIDTH // 2 + (gv.r_radius + 30), bv.WIDTH // 2 - (gv.b_radius + 30)
-red_start_y, blue_start_y = bv.HEIGHT // 3, bv.HEIGHT // 3
+config = settings_loop(screen, clock)
+if config is None:
+    pygame.quit()
+    exit()
+
+gv = calculate_game_vars(config)
+
+balls.ball_bounce = gv['ball_bounce']
+
+red_start_x = bv.WIDTH // 2 + int(gv['r_radius'] + 30)
+blue_start_x = bv.WIDTH // 2 - int(gv['b_radius'] + 30)
+red_start_y = bv.HEIGHT // 3
+blue_start_y = bv.HEIGHT // 3
 
 running = True
 
@@ -26,38 +42,54 @@ def reset_game():
     rball.dx, rball.dy = 0, 0
     bball.dx, bball.dy = 0, 0
 
-rball = PlayerBall(RED, red_start_x, red_start_y,
-            pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE,
-            gv.r_radius, gv.r_gravity, gv.r_jump_force, gv.r_vertical_force, gv.r_lateral_force,
-            gv.r_lateral_friction, gv.r_floor_bounce, gv.r_heavy_weight, 
-            gv.r_heavy_force_multiplier, gv.r_weight)
-bball = PlayerBall(BLUE, blue_start_x, blue_start_y,
-            pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_LSHIFT,
-            gv.b_radius, gv.b_gravity, gv.b_jump_force, gv.b_vertical_force, gv.b_lateral_force,
-            gv.b_lateral_friction, gv.b_floor_bounce, gv.b_heavy_weight, 
-            gv.b_heavy_force_multiplier, gv.b_weight)
+rball = PlayerBall(
+    RED, red_start_x, red_start_y,
+    pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE,
+    gv['r_radius'], gv['r_gravity'], gv['r_jump_force'], gv['r_vertical_force'],
+    gv['r_lateral_force'], gv['r_lateral_friction'], gv['r_floor_bounce'],
+    gv['r_heavy_weight'], gv['r_heavy_force_multiplier'], gv['r_weight']
+)
+bball = PlayerBall(
+    BLUE, blue_start_x, blue_start_y,
+    pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_LSHIFT,
+    gv['b_radius'], gv['b_gravity'], gv['b_jump_force'], gv['b_vertical_force'],
+    gv['b_lateral_force'], gv['b_lateral_friction'], gv['b_floor_bounce'],
+    gv['b_heavy_weight'], gv['b_heavy_force_multiplier'], gv['b_weight']
+)
 pballs = [rball, bball]
 npcballs = []
-for i in range(1, gv.num_npc_balls_per_side + 1):
-    npcballs.append(NPCBall(BLACK, bv.bar_width + 50 + gv.npc_ball_radius, 
-        bv.HEIGHT - 100 - (50 + gv.npc_ball_radius)*i, gv.npc_ball_radius, gv.npc_weight))
-    npcballs.append(NPCBall(BLACK, bv.WIDTH - (bv.bar_width + 50 + gv.npc_ball_radius), 
-        bv.HEIGHT - 100 - (50 + gv.npc_ball_radius)*i, gv.npc_ball_radius, gv.npc_weight))
+for i in range(1, gv['num_npc_balls_per_side'] + 1):
+    npcballs.append(NPCBall(
+        BLACK,
+        bv.bar_width + 50 + gv['npc_ball_radius'],
+        bv.HEIGHT - 100 - (50 + gv['npc_ball_radius']) * i,
+        gv['npc_ball_radius'],
+        gv['npc_weight'],
+        gv['npc_max_speed']
+    ))
+    npcballs.append(NPCBall(
+        BLACK,
+        bv.WIDTH - (bv.bar_width + 50 + gv['npc_ball_radius']),
+        bv.HEIGHT - 100 - (50 + gv['npc_ball_radius']) * i,
+        gv['npc_ball_radius'],
+        gv['npc_weight'],
+        gv['npc_max_speed']
+    ))
+
 balls = pballs + npcballs
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     keys = pygame.key.get_pressed()
-    balls_cpy = balls[::-1]
 
-    for pball in pballs:
-        pball.move(keys, balls_cpy)
-        balls_cpy.pop()
-    for npcball in npcballs:
-        npcball.move(balls_cpy, pballs)
-        balls_cpy.pop()
+    for i, ball in enumerate(balls):
+        if isinstance(ball, PlayerBall):
+            ball.move(keys, balls, i)
+        elif isinstance(ball, NPCBall):
+            ball.move(balls, pballs, i)
 
     screen.fill(LIGHT_GRAY)
     pygame.draw.rect(screen, GRAY, (0, bv.floor_y, bv.WIDTH, 50))
