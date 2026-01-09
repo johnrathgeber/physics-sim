@@ -11,8 +11,7 @@ HEADER_Y = 150
 BLUE_COL_X = bv.WIDTH // 6 - INPUT_BOX_WIDTH // 2
 RED_COL_X = bv.WIDTH - bv.WIDTH // 6 - INPUT_BOX_WIDTH // 2
 GLOBAL_COL_X = bv.WIDTH // 2 - INPUT_BOX_WIDTH // 2
-GLOBAL_START_Y = (bv.HEIGHT * 6) // 10
-
+GLOBAL_START_Y = bv.HEIGHT // 2
 def settings_loop(screen, clock):
     config = GameConfig()
 
@@ -21,8 +20,10 @@ def settings_loop(screen, clock):
     label_font = pygame.font.SysFont("Arial", 18)
     input_font = pygame.font.SysFont("Arial", 20)
     error_font = pygame.font.SysFont("Arial", 24)
+    info_font = pygame.font.SysFont("Arial", 30)
 
     LIGHT_GRAY = (200, 200, 200)
+    DARK_GRAY = (80, 80, 80)
     RED = (193, 21, 21)
     BLUE = (118, 77, 230)
     BLACK = (0, 0, 0)
@@ -131,6 +132,10 @@ def settings_loop(screen, clock):
 
         screen.fill(LIGHT_GRAY)
         draw_text_centered(screen, "GAME SETTINGS", 950, 60, title_font, BLACK)
+        info_text_1 = "Values are relative multipliers (1.0 is default, 2.0 is double)."
+        info_text_2 = "Exception: Bludgers Per Side is the actual count."
+        draw_text_centered(screen, info_text_1, 950, 130, info_font, DARK_GRAY)
+        draw_text_centered(screen, info_text_2, 950, 180, info_font, DARK_GRAY)
         draw_text_centered(screen, "BLUE PLAYER", BLUE_COL_X + 75, 100, header_font, BLUE)
         draw_text_centered(screen, "RED PLAYER", RED_COL_X + 75, 100, header_font, RED)
         draw_text_centered(screen, "GLOBAL SETTINGS", GLOBAL_COL_X + 75, GLOBAL_START_Y - 50,

@@ -28,6 +28,7 @@ if config is None:
 gv = calculate_game_vars(config)
 
 balls.ball_bounce = gv['ball_bounce']
+balls.npc_acceleration = gv['npc_acceleration']
 
 red_start_x = bv.WIDTH // 2 + int(gv['r_radius'] + 30)
 blue_start_x = bv.WIDTH // 2 - int(gv['b_radius'] + 30)

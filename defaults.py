@@ -9,6 +9,7 @@ player_weight = 1
 heavy_weight = 2
 heavy_force_multiplier = 0.8
 ball_bounce = 0.9
+npc_acceleration = 1
 npc_max_speed = 50
 npc_ball_radius = 30
 num_npc_balls_per_side = 5

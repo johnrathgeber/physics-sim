@@ -28,6 +28,7 @@ def calculate_game_vars(config):
         'b_heavy_force_multiplier': df.heavy_force_multiplier * multipliers['b_heavy_force_multiplierm'],
 
         'ball_bounce': df.ball_bounce * multipliers['ball_bouncem'],
+        'npc_acceleration': df.npc_acceleration * multipliers['npc_accelerationm'],
         'npc_max_speed': df.npc_max_speed * multipliers['npc_max_speedm'],
         'npc_ball_radius': df.npc_ball_radius * multipliers['npc_ball_radiusm'],
         'npc_weight': df.npc_weight * multipliers['npc_weightm'],

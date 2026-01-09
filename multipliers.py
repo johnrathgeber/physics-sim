@@ -24,6 +24,7 @@ DEFAULT_MULTIPLIERS = {
     'b_heavy_force_multiplierm': 1,
 
     'ball_bouncem': 1,
+    'npc_accelerationm': 1,
     'npc_max_speedm': 1,
     'npc_ball_radiusm': 1,
     'npc_weightm': 1,

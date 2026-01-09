@@ -2,6 +2,7 @@ import math
 import board_vars as bv
 
 ball_bounce = 0.9
+npc_acceleration = 1
 
 class Ball:
     def __init__(self, color, start_x, start_y, radius, weight):
@@ -119,6 +120,7 @@ class NPCBall(Ball):
         super().move()
 
     def update_npc_movement(self, pballs):
+        global npc_acceleration
         mn_dist = float('inf')
         mn_pball = None
         for pball in pballs:
@@ -126,7 +128,8 @@ class NPCBall(Ball):
             if dist < mn_dist:
                 mn_dist = dist
                 mn_pball = pball
-        n1, n2 = (self.x - mn_pball.x) * mn_dist / 5000000, (self.y - mn_pball.y) * mn_dist / 5000000
+        n1 = (self.x - mn_pball.x) * mn_dist * npc_acceleration / 5000000
+        n2 = (self.y - mn_pball.y) * mn_dist * npc_acceleration / 5000000
         self.dx -= n1
         self.dy -= n2
         if self.y + self.radius >= bv.floor_y:

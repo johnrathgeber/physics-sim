@@ -122,32 +122,38 @@ MULTIPLIER_METADATA = {
         'category': 'blue_player'
     },
     'ball_bouncem': {
-        'label': 'Ball Bounce',
+        'label': 'Bounciness',
         'description': 'Bounciness of ball-to-ball collisions',
         'default': 1,
         'category': 'global'
     },
-    'npc_max_speedm': {
-        'label': 'NPC Max Speed',
-        'description': 'Maximum speed of NPC balls',
+    'npc_ball_radiusm': {
+        'label': 'Bludger Radius',
+        'description': 'Size of bludgers',
         'default': 1,
         'category': 'global'
     },
-    'npc_ball_radiusm': {
-        'label': 'NPC Radius',
-        'description': 'Size of NPC balls',
+    'npc_accelerationm': {
+        'label': 'Bludger Acceleration',
+        'description': 'How fast bludgers accelerate towards players',
+        'default': 1,
+        'category': 'global'
+    },
+    'npc_max_speedm': {
+        'label': 'Bludger Max Speed',
+        'description': 'Maximum speed of bludgers',
         'default': 1,
         'category': 'global'
     },
     'npc_weightm': {
-        'label': 'NPC Weight',
-        'description': 'Mass of NPC balls',
+        'label': 'Bludger Weight',
+        'description': 'Mass of bludgers',
         'default': 1,
         'category': 'global'
     },
     'num_npc_balls_per_side': {
-        'label': 'NPCs Per Side',
-        'description': 'Number of NPC balls on each side',
+        'label': 'Bludgers Per Side',
+        'description': 'Number of bludgers on each side',
         'default': df.num_npc_balls_per_side,
         'category': 'global'
     }
