@@ -16,9 +16,31 @@ LIGHT_GRAY = (200, 200, 200)
 RED = (193, 21, 21)
 BLUE = (118, 77, 230)
 GRAY = (50, 50, 50)
+CREAM = (246, 243, 224)
 BLACK = (0, 0, 0)
 
 font = pygame.font.SysFont("Arial", 60, bold=True)
+
+def title_screen():
+    title_image = pygame.image.load("title.png")
+    title_rect = title_image.get_rect(center=(bv.WIDTH // 2, bv.HEIGHT // 2))
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    waiting = False
+        screen.fill(CREAM)
+        screen.blit(title_image, title_rect)
+        pygame.display.flip()
+        clock.tick(30)
+    return True
+
+if not title_screen():
+    pygame.quit()
+    exit()
 
 config = settings_loop(screen, clock)
 if config is None:
