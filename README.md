@@ -1,4 +1,4 @@
-# Physics Sim
+# Kinetic Clash
 
 A two-player, physics-based game. This started as a curiosity project to explore physics simulation and evolved into a playable game with customizable mechanics.
 
