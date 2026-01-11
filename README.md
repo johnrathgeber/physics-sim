@@ -22,6 +22,16 @@ Players control colored balls with realistic physics including gravity, friction
 
 Built entirely from scratch using Python and the pygame library. All game logic, physics calculations, and mechanics were hand-coded. Some UI components and display elements were created with AI assistance (vibecoded).
 
+## Requirements
+
+- Python 3.8 or higher
+- pygame 2.0+
+
+Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
 ## Running the Game
 
 ```bash
