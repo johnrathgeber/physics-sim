@@ -1,4 +1,4 @@
-import defaults as df
+import src.defaults as df
 
 MULTIPLIER_METADATA = {
     'r_radiusm': {

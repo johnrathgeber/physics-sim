@@ -1,4 +1,4 @@
-import defaults as df
+import src.defaults as df
 
 
 def calculate_game_vars(config):

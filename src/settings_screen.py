@@ -1,7 +1,7 @@
 import pygame
-import board_vars as bv
-from config import GameConfig, MULTIPLIER_METADATA
-from ui_components import InputBox, Button, Tooltip, draw_text_centered
+import src.board_vars as bv
+from src.config import GameConfig, MULTIPLIER_METADATA
+from src.ui_components import InputBox, Button, Tooltip, draw_text_centered
 
 INPUT_BOX_WIDTH = 150
 INPUT_BOX_HEIGHT = 35

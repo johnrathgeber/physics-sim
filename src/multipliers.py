@@ -1,4 +1,4 @@
-import defaults as df
+import src.defaults as df
 
 DEFAULT_MULTIPLIERS = {
     'r_radiusm': 1,

@@ -1,10 +1,10 @@
 import pygame
-import board_vars as bv
-import balls
-from balls import PlayerBall, NPCBall
-from settings_screen import settings_loop
-from config import GameConfig
-from game_vars import calculate_game_vars
+import src.board_vars as bv
+import src.balls as balls
+from src.balls import PlayerBall, NPCBall
+from src.settings_screen import settings_loop
+from src.config import GameConfig
+from src.game_vars import calculate_game_vars
 
 pygame.init()
 screen = pygame.display.set_mode((bv.WIDTH, bv.HEIGHT))
@@ -22,7 +22,7 @@ BLACK = (0, 0, 0)
 font = pygame.font.SysFont("Arial", 60, bold=True)
 
 def title_screen():
-    title_image = pygame.image.load("title.png")
+    title_image = pygame.image.load("assets/title.png")
     title_rect = title_image.get_rect(center=(bv.WIDTH // 2, bv.HEIGHT // 2))
     waiting = True
     while waiting:

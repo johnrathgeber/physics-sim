@@ -1,5 +1,5 @@
 import math
-import board_vars as bv
+import src.board_vars as bv
 
 ball_bounce = 0.9
 npc_acceleration = 1
