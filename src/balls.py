@@ -17,6 +17,7 @@ class Ball:
         self.heavy_weight = 1
         self.dx = 0
         self.dy = 0
+        self.powered = False
 
     def update_collisions(self, balls, start_idx):
         global ball_bounce
@@ -35,8 +36,18 @@ class Ball:
                     t1, t2 = -n2, n1
                     ncomp1 = self.dx * n1 + self.dy * n2
                     ncomp2 = ball.dx * n1 + ball.dy * n2
-                    m1 = self.heavy_weight if self.heavy else self.weight
-                    m2 = ball.heavy_weight if ball.heavy else ball.weight
+                    if self.powered:
+                        m1 = self.heavy_weight * 100
+                    elif self.heavy:
+                        m1 = self.heavy_weight
+                    else:
+                        m1 = self.weight
+                    if ball.powered:
+                        m2 = ball.heavy_weight * 100
+                    elif ball.heavy:
+                        m2 = ball.heavy_weight
+                    else:
+                        m2 = ball.weight
                     ncomp1_new = (ncomp1 * (m1 - ball_bounce * m2) +
                         ncomp2 * (1 + ball_bounce) * m2) / (m1 + m2)
                     ncomp2_new = (ncomp2 * (m2 - ball_bounce * m1) +
@@ -71,12 +82,22 @@ class PlayerBall(Ball):
         self.heavy_force_multiplier = heavy_force_multiplier
         self.score = 0
         self.alive = True
+        self.powered_time = 0
+        self.powerup_refresh = 300
 
     def move(self, keys, balls, start_idx):
         self.update_collisions(balls, start_idx)
         self.update_player_movement(keys)
         super().move()
         self.check_dead()
+        self.check_power()
+
+    def check_power(self):
+        if self.powered:
+            self.powered_time += 1
+            if self.powered_time >= self.powerup_refresh:
+                self.powered_time = 0
+                self.powered = False
 
     def update_player_movement(self, keys):
         self.heavy = keys[self.heavy_key]

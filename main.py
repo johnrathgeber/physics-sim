@@ -1,7 +1,9 @@
 import pygame
+import random
 import src.board_vars as bv
 import src.balls as balls
 from src.balls import PlayerBall, NPCBall
+from src.powerup import Powerup
 from src.settings_screen import settings_loop
 from src.config import GameConfig
 from src.game_vars import calculate_game_vars
@@ -15,6 +17,7 @@ WHITE = (255, 255, 255)
 LIGHT_GRAY = (200, 200, 200)
 RED = (193, 21, 21)
 BLUE = (118, 77, 230)
+GREEN = (77, 200, 77)
 GRAY = (50, 50, 50)
 CREAM = (246, 243, 224)
 BLACK = (0, 0, 0)
@@ -42,6 +45,8 @@ if not title_screen():
     pygame.quit()
     exit()
 
+GameConfig.create_default_preset()
+
 config = settings_loop(screen, clock)
 if config is None:
     pygame.quit()
@@ -64,6 +69,12 @@ def reset_game():
     bball.x, bball.y = bball.start_x, bball.start_y
     rball.dx, rball.dy = 0, 0
     bball.dx, bball.dy = 0, 0
+    rball.powered = False
+    bball.powered = False
+    rball.powered_time = 0
+    bball.powered_time = 0
+    powerup.alive = False
+    powerup.dead_time = 0
 
 rball = PlayerBall(
     RED, red_start_x, red_start_y,
@@ -101,6 +112,10 @@ for i in range(1, gv['num_npc_balls_per_side'] + 1):
 
 balls = pballs + npcballs
 
+powerup_x = random.randint(bv.bar_width + 50, bv.WIDTH - bv.bar_width - 50)
+powerup_y = random.randint(50, bv.floor_y - 50)
+powerup = Powerup(powerup_x, powerup_y, "ultra heavy", GREEN)
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -122,13 +137,22 @@ while running:
     text_rect = score_text.get_rect(center=(bv.WIDTH // 2, 100))
     screen.blit(score_text, text_rect)
     for pball in pballs:
-        if pball.heavy:
+        if pball.powered:
+            pygame.draw.circle(screen, BLACK, (int(pball.x), int(pball.y)), pball.radius)
+            pygame.draw.circle(screen, pball.color, (int(pball.x), int(pball.y)), pball.radius - 5)
+        elif pball.heavy:
             pygame.draw.circle(screen, WHITE, (int(pball.x), int(pball.y)), pball.radius)
             pygame.draw.circle(screen, pball.color, (int(pball.x), int(pball.y)), pball.radius - 3)
         else:
             pygame.draw.circle(screen, pball.color, (int(pball.x), int(pball.y)), pball.radius)
         if pball.y < 0:
             pygame.draw.rect(screen, pball.color, (pball.x - 2, 5, 4, 9))
+    powerup.step(pballs)
+    if powerup.alive:
+        pygame.draw.circle(screen, powerup.color, (int(powerup.x), int(powerup.y)), powerup.radius)
+        pygame.draw.circle(screen, WHITE, (int(powerup.x), int(powerup.y)), powerup.radius - 7)
+        pygame.draw.circle(screen, powerup.color, (int(powerup.x), int(powerup.y)), powerup.radius - 14)
+        pygame.draw.circle(screen, WHITE, (int(powerup.x), int(powerup.y)), powerup.radius - 21)
     for npcball in npcballs:
         pygame.draw.circle(screen, npcball.color, (int(npcball.x), int(npcball.y)), npcball.radius)
     pygame.display.flip()

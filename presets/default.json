@@ -1,0 +1,33 @@
+{
+  "name": "default",
+  "description": "Default balanced settings (1.0 multipliers)",
+  "version": "1.0",
+  "multipliers": {
+    "r_radiusm": 1.0,
+    "r_gravitym": 1.0,
+    "r_jump_forcem": 1.0,
+    "r_vertical_forcem": 1.0,
+    "r_lateral_forcem": 1.0,
+    "r_lateral_frictionm": 1.0,
+    "r_floor_bouncem": 1.0,
+    "r_player_weightm": 1.0,
+    "r_heavy_weightm": 1.0,
+    "r_heavy_force_multiplierm": 1.0,
+    "b_radiusm": 1.0,
+    "b_gravitym": 1.0,
+    "b_jump_forcem": 1.0,
+    "b_vertical_forcem": 1.0,
+    "b_lateral_forcem": 1.0,
+    "b_lateral_frictionm": 1.0,
+    "b_floor_bouncem": 1.0,
+    "b_player_weightm": 1.0,
+    "b_heavy_weightm": 1.0,
+    "b_heavy_force_multiplierm": 1.0,
+    "ball_bouncem": 1.0,
+    "npc_ball_radiusm": 1.0,
+    "npc_accelerationm": 1.0,
+    "npc_max_speedm": 1.0,
+    "npc_weightm": 1.0,
+    "num_npc_balls_per_side": 5
+  }
+}
